@@ -1,6 +1,7 @@
 package com.jciombalo.utils.lang.reflection;
 
 import java.lang.reflect.Method;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.sf.cglib.proxy.Enhancer;
@@ -27,6 +28,14 @@ public class MethodDiscovery {
 		@SuppressWarnings("unchecked")
 		T obj = (T) Enhancer.create(clazz, recorder);
 		function.apply(obj);
+		return recorder.getInvokedMethod();
+	}
+	
+	public static <T> Method getMethod(Class<T> clazz, Consumer<T> consumer) {
+		MethodRecorder recorder = new MethodRecorder();
+		@SuppressWarnings("unchecked")
+		T obj = (T) Enhancer.create(clazz, recorder);
+		consumer.accept(obj);
 		return recorder.getInvokedMethod();
 	}
 

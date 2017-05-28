@@ -10,15 +10,13 @@ import org.junit.Test;
 public class MethodDiscoveryTest {
 	
 	@Test
-	public void given_a_method_reference_When_getting_Then_return_its_reflection() throws NoSuchMethodException, SecurityException {
-		Method m = MethodDiscovery.getMethod(TestClass.class, TestClass::testMethod);
-		assertThat(m).isEqualTo(TestClass.class.getMethod("testMethod"));
+	public void given_a_method_reference_When_getting_Then_return_its_reflection() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method returningMethod = MethodDiscovery.getMethod(TestClass.class, TestClass::returningMethod);
+		Method voidMethod = MethodDiscovery.getMethod(TestClass.class, TestClass::voidMethod);
+		TestClass testObj = new TestClass();
+		assertThat(returningMethod).isEqualTo(TestClass.class.getMethod("returningMethod"));
+		assertThat(voidMethod).isEqualTo(TestClass.class.getMethod("voidMethod"));
+		assertThat(returningMethod.invoke(testObj)).isEqualTo(testObj.returningMethod());
 	}
 	
-	@Test
-	public void given_a_discovered_method_When_invoking_Then_return_its_original_value() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method m = MethodDiscovery.getMethod(TestClass.class, TestClass::testMethod);
-		TestClass testObj = new TestClass();
-		assertThat(m.invoke(testObj)).isEqualTo(testObj.testMethod());
-	}
 }
